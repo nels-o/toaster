@@ -6,7 +6,7 @@ existing batch scripts etc.
 
 ##Deps
 
-Note that if you want to build this application from source you will need the Windows API CodePack. This is required
+Note that if you want to build this application from source you will need the [Windows API CodePack](http://archive.msdn.microsoft.com/WindowsAPICodePack/Project/License.aspx). This is required
 because the application has to ensure that it is registered with the Windows Start screen in order to post toast. 
 Registration basically entails adding a shortcut for the app to the start screen.
 
