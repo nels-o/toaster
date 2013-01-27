@@ -2,7 +2,7 @@ toaster
 =======
 
 A wee Win8 console notifications app. Post toast notifications from the console, making it easy to integrate into 
-existing batch scripts etc.
+existing batch scripts etc. A significant portion of toast is based on existing toast notification examples. 
 
 ##Deps
 
