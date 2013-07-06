@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using ShellHelpers;
@@ -85,7 +86,7 @@ namespace toast
             }
             TryCreateShortcut();
             ToastNotification toast = ShowToast(ToastTitle, ToastBody, ToastImage);
-            while (wait) ;
+            while (wait) { Thread.Sleep(500); }
         }
 
         private static void PrintInstructions()
