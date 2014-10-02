@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+
 
 namespace toast
 {
@@ -26,6 +28,7 @@ namespace toast
             String ToastTitle = null;
             String ToastBody = null;
             String ToastImage = null;
+            Boolean UseSound = true;
             Boolean wait = false;
 
             if (args.Length == 0)
@@ -77,6 +80,9 @@ namespace toast
                                 Environment.Exit(-1);
                             }
                             break;
+                        case "-q":
+                            UseSound = false;
+                            break;
                         case "-w":
                             wait = true;
                             break;
@@ -85,7 +91,7 @@ namespace toast
                 }
             }
             TryCreateShortcut();
-            ToastNotification toast = ShowToast(ToastTitle, ToastBody, ToastImage);
+            ToastNotification toast = ShowToast(ToastTitle, ToastBody, ToastImage, UseSound);
             while (wait) { Thread.Sleep(500); }
         }
 
@@ -101,6 +107,7 @@ namespace toast
                           "[-t] <title string>\t| Displayed on the first line of the toast.\n" +
                           "[-m] <message string>\t| Displayed on the remaining lines, wrapped.\n" +
                           "[-p] <image URI>\t| Display toast with an image\n" +
+                          "[-q] \t\t\t| Deactivate sound (quiet).\n" +
                           "[-w] \t\t\t| Wait for toast to expire or activate.\n" +
                           "?\t\t\t| Print these intructions. Same as no args.\n" +
                           "Exit Status\t:  Exit Code\n" +
@@ -117,7 +124,7 @@ namespace toast
         // In order to display toasts, a desktop application must have a shortcut on the Start menu.
         // Also, an AppUserModelID must be set on that shortcut.
         // The shortcut should be created as part of the installer. The following code shows how to create
-        // a shortcut and assign an AppUserModelID using Windows APIs. You must download and include the 
+        // a shortcut and assign an AppUserModelID using Windows APIs. You must download and include the
         // Windows API Code Pack for Microsoft .NET Framework for this code to function
         private static bool TryCreateShortcut()
         {
@@ -167,7 +174,7 @@ namespace toast
 
         // Create and show the toast.
         // See the "Toasts" sample for more detail on what can be done with toasts
-        private static ToastNotification ShowToast(String title, String message, String imageURI)
+        private static ToastNotification ShowToast(String title, String message, String imageURI, Boolean sound = true)
         {
             if (message == null) return null;
             // Get a toast XML template
@@ -209,6 +216,10 @@ namespace toast
                 XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
                 stringElements[0].AppendChild(toastXml.CreateTextNode(message));
             }
+
+            // Set if silent or not
+            SetSilent(sound, toastXml);
+
             // Create the toast and attach event listeners
             ToastNotification toast = new ToastNotification(toastXml);
             toast.Activated += ToastActivated;
@@ -218,6 +229,26 @@ namespace toast
             // Show the toast. Be sure to specify the AppUserModelId on your application's shortcut!
             ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
             return toast;
+        }
+
+        private static void SetSilent(bool useSound, XmlDocument toastXml)
+        {
+            var audio = toastXml.GetElementsByTagName("audio").FirstOrDefault();
+
+            if (audio == null)
+            {
+                audio = toastXml.CreateElement("audio");
+                var toastNode = ((XmlElement)toastXml.SelectSingleNode("/toast"));
+
+                if (toastNode != null)
+                {
+                    toastNode.AppendChild(audio);
+                }
+            }
+
+            var attribute = toastXml.CreateAttribute("silent");
+            attribute.Value = (!useSound).ToString().ToLower();
+            audio.Attributes.SetNamedItem(attribute);
         }
 
         private static void ToastActivated(ToastNotification sender, object e)
