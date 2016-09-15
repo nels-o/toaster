@@ -21,6 +21,14 @@ At present there is support for
 Eventually I'll get the sound portion working as well, and in the long term, support for all of the templated toast 
 types. 
 
+## Notes
+
+There are a few quirks that can crop up.
+
+* Don't forget to turn on notifications in the settings dialog if you're using Windows 10
+  * You can find this under Settings > Notifications & Actions
+  * Remember that there are both global and local options, so choose accordingly.
+
 # License
 
 For now I'm releasing this under the Creative Commons Attribution license http://creativecommons.org/licenses/by/3.0/us/
