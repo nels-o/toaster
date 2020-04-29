@@ -4,13 +4,13 @@ toaster
 A wee Win8 console notifications app. Post toast notifications from the console, making it easy to integrate into 
 existing batch scripts etc. A significant portion of toast is based on existing toast notification examples. 
 
-##Deps
+## Deps
 
 Note that if you want to build this application from source you will need the [Windows API CodePack](http://archive.msdn.microsoft.com/WindowsAPICodePack/Project/License.aspx). This is required
 because the application has to ensure that it is registered with the Windows Start screen in order to post toast. 
 Registration basically entails adding a shortcut for the app to the start screen.
 
-##Features
+## Features
 
 At present there is support for 
 
